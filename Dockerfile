@@ -7,8 +7,8 @@ RUN chmod -R 777 /opt/dagster
 
 RUN pip install dagster-webserver dagster-postgres dagster-aws
 
-COPY requirements.txt /
-RUN pip install -r requirements.txt --no-cache-dir
+# COPY requirements.txt /
+# RUN pip install -r requirements.txt --no-cache-dir
 
 # Copy dagster instance YAML to $DAGSTER_HOME
 COPY dagster.yaml /opt/dagster/dagster_home/
@@ -24,3 +24,6 @@ WORKDIR /opt/dagster/app
 EXPOSE 3000
 
 ENTRYPOINT ["dagster-webserver", "-h", "0.0.0.0", "-p", "3000"]
+
+COPY home_utils-1.0-py3-none-any.whl /
+RUN pip install /home_utils-1.0-py3-none-any.whl
