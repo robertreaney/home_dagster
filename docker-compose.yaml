@@ -1,0 +1,19 @@
+version: "2.4"
+services:
+  dagster:
+    env_file:
+      - .env
+    container_name: dagster
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - PYTHON_VERSION=${PYTHON_VERSION}
+    volumes:
+      - "./.dagster/storage:/opt/dagster/storage"
+      - "./.dagster/local:/opt/dagster/local"
+      - "./.dagster/compute_logs:/opt/dagster/compute_logs"
+      - "./src:/opt/dagster/app/src"
+      - "./data:/opt/dagster/app/data"
+    ports:
+      - "3000:3000"

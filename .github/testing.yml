@@ -1,0 +1,61 @@
+name: Test Suite
+run-name: ${{ github.actor }}
+
+on:
+    workflow_dispatch:
+    pull_request:
+    push:
+      branches: [ main, cicd ]
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+    group: ci
+    cancel-in-progress: true
+
+jobs:
+    Test-Coverage:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repo
+              uses: actions/checkout@v4
+
+            - name: Setup Env
+              run: |
+                set -a
+                source .env
+                set +a
+                echo "PYTHON_VERSION=${PYTHON_VERSION}" >> $GITHUB_ENV
+
+            - name: Setup Python
+              uses: actions/setup-python@v4
+              with:
+                python-version: ${{ env.PYTHON_VERSION }}
+
+            - name: Install Dependencies
+              run: |
+                python -m pip install --upgrade pip
+                pip install -r requirements.txt
+
+            - name: Run Unit Tests
+              run: |
+                # only run tests on the source code. live tests require active dagster service
+                coverage run -m pytest src/tests
+
+            - name: Test Suite Pass/Fail
+              run: |
+                if [ -f .pytest_cache/v/cache/lastfailed ]; then
+                  echo "Failure file exists, failing the job."
+                  exit 1
+                else
+                  echo "Failure file does not exist, passing the job."
+                fi
+
+            - name: Print Coverage
+              run: |
+                coverage report
+
+            - name: Upload Test Coverage as Artifact
+              uses: actions/upload-artifact@v3
+              with:
+                name: .coverage
+                path: .coverage
