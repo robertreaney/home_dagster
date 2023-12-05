@@ -17,7 +17,7 @@ daily_refresh_schedule = ScheduleDefinition(
 
 daily_weather_schedule = ScheduleDefinition(
     job=define_asset_job(name="weather_job"), 
-    cron_schedule="0 8 * * *", 
+    cron_schedule=["0 8 * * *", "0 20 * * *"], 
     default_status=DefaultScheduleStatus.RUNNING,
     execution_timezone='America/New_York'
 )
