@@ -1,0 +1,10 @@
+load_from:
+  # References the file copied into your Dockerfile
+  - python_module: etl
+
+# load_from:
+#   # Each entry here corresponds to a container that exposes a gRPC server.
+#   - grpc_server:
+#       host: dagster_code
+#       port: 4000
+#       location_name: "code"

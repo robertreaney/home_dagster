@@ -11,7 +11,7 @@ def helloworld() -> None:
     logging.info('Hello World')
     Path('data').mkdir(exist_ok=True, parents=True)
     with open('data/helloworld.json', 'w') as f:
-        json.dump({'hello': 'world!'}, f)
+        json.dump({'hello': 'world!', 'timestamp': datetime.now().strftime('%Y-%m-%d')}, f)
 
     # this return object provides more information to the workflow
     return MaterializeResult(

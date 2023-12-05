@@ -1,14 +1,15 @@
 version: "2.4"
 services:
-  dagster:
+  webserver:
     env_file:
       - .env
-    container_name: dagster
+    container_name: dagster_webserver
     build:
       context: .
       dockerfile: Dockerfile
       args:
         - PYTHON_VERSION=${PYTHON_VERSION}
+    entrypoint: ["dagster-webserver", "-h", "0.0.0.0", "-p", "3000"]
     volumes:
       - "./.dagster/storage:/opt/dagster/storage"
       - "./.dagster/local:/opt/dagster/local"
@@ -17,3 +18,46 @@ services:
       - "./data:/opt/dagster/app/data"
     ports:
       - "3000:3000"
+    networks:
+      - dagster_network
+
+  daemon:
+    env_file:
+      - .env
+    container_name: dagster_daemon
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - PYTHON_VERSION=${PYTHON_VERSION}
+    entrypoint: ["dagster-daemon", "run"]
+    volumes:
+      - "./.dagster/storage:/opt/dagster/storage"
+      - "./.dagster/local:/opt/dagster/local"
+      - "./.dagster/compute_logs:/opt/dagster/compute_logs"
+      - "./src:/opt/dagster/app/src"
+      - "./data:/opt/dagster/app/data"
+    networks:
+      - dagster_network
+
+  # grpc_server:
+  #   env_file:
+  #     - .env
+  #   container_name: dagster_code
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #     args:
+  #       - PYTHON_VERSION=${PYTHON_VERSION}
+  #   entrypoint: ["dagster", "api", "grpc", "-h", "0.0.0.0", "-p", "4000", "-m", "src.etl"]
+  #   volumes:
+  #     - "./.dagster/storage:/opt/dagster/storage"
+  #     - "./.dagster/local:/opt/dagster/local"
+  #     - "./.dagster/compute_logs:/opt/dagster/compute_logs"
+  #     - "./src:/opt/dagster/app/src"
+  #     - "./data:/opt/dagster/app/data"
+  #   ports:
+  #     - "4000:4000"
+
+networks:
+  dagster_network:
