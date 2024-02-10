@@ -9,7 +9,7 @@ setup(
         "python-dotenv",
         # "pandas",
         "requests",
-        "home_utils"
+        "boto3"
     ],
     extras_require={"dev": ["dagster-webserver", "pytest", "coverage"]},
 )
